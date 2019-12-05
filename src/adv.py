@@ -5,24 +5,34 @@ import sys
 # Declare all the rooms
 
 room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+    'outside': Room("Outside Cave Entrance",
+                    "North of you, the cave mount beckons"),
 
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
+    'foyer': Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),
 
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
+    'narrow': Room("Narrow Passage", """The narrow passage bends here from west
 to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
-}
+chamber! Being lost for days in a hostile jungle trying to find two of the most 
+valued and long-lost weapons has finally paid off!. 
+                                
+                           The Sword of Infinite Power
+                                        and
+                            The Shield of All Strength
+                    
+It is your mission to find these two relics for both the value that
+they both and for your own protection.. 
 
+The only exit is to the south.""",
+                     ['The Sword of Infinite Power', 'The Shield of All Strength']),
+
+}
 
 # Link rooms together
 
@@ -58,77 +68,64 @@ p = Player(p_name, room['outside'])
 # Print an error message if the movement isn't allowed.
 #
 
+def start_game():
+    print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
+    # * Prints the current room name
+    print(f"Greetings {p_name}!\nThe room that you are in is:", p.current_room.name, '\n')
+    print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
+    # * Prints the current description (the textwrap module might be useful here).
+    print('Available Directions:', p.current_room.description, '\n')
+    print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
+    # If the user enters "q", quit the game.
+    print("Press 'q' anytime to quit the game. Otherwise have fun playing!\n")
+    print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
 
-print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
-# * Prints the current room name
-print(f"Greetings {p_name}!\nThe room that you are in is:", p.current_room.name, '\n')
-print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
-# * Prints the current description (the textwrap module might be useful here).
-print('Available Directions:', p.current_room.description, '\n')
-print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
-# If the user enters "q", quit the game.
-print("Press 'q' anytime to quit the game. Otherwise have fun playing!\n")
-print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|\n')
 
-while True:
-    player_dir = input(f"{p_name}, where would you like to go? (Please press n, s, e or w):\n").lower()
+start_game()
 
-    print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|')
 
-    if player_dir == "n":
-        # Check to see if n (North) exists. (How to check the existence of a direction?)
-        if p.current_room.n_to is not None:
-            if p.current_room.name == "Outside Cave Entrance":
-                p.current_room = room['foyer']
+def play_game():
+    while True:
+        player_dir = input(f"{p_name}, where would you like to go? (Please press n, s, e or w):\n").lower()
+
+        print('|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|_|-|')
+
+        if player_dir == "n":
+            # Check to see if n (North) exists. (How to check the existence of a direction?)
+            if p.current_room.n_to is not None and p.items == []:
+                p.current_room = p.current_room.n_to
                 print("You are now in the:", p.current_room.name)
                 print("Directions:", p.current_room.description)
-            elif p.current_room.name == "Foyer":
-                p.current_room = room['overlook']
-                print("You are now in the:", p.current_room.name)
-                print("Directions:", p.current_room.description)
-            elif p.current_room.name == "Narrow Passage":
-                p.current_room = room['treasure']
-                print("You are now in the:", p.current_room.name)
-                print("Directions:", p.current_room.description)
-        else:
-            print("That's an invalid move. Please try again.")
+            else:
+                print("That's an invalid move. Please try again.")
 
-    elif player_dir == "e":
-        if p.current_room.e_to is not None:
-            if p.current_room.name == "Foyer":
-                p.current_room = room['narrow']
+        elif player_dir == "e":
+            if p.current_room.e_to is not None and p.items == []:
+                p.current_room = p.current_room.e_to
                 print("You are now in the:", p.current_room.name)
                 print("Directions:", p.current_room.description)
-        else:
-            print("That's an invalid move. Please try again.")
+            else:
+                print("That's an invalid move. Please try again.")
 
-    elif player_dir == "s":
-        if p.current_room.s_to is not None:
-            if p.current_room.name == "Foyer":
-                p.current_room = room['outside']
+        elif player_dir == "s":
+            if p.current_room.s_to is not None and p.items == []:
+                p.current_room = p.current_room.s_to
                 print("You are now in the:", p.current_room.name)
                 print("Directions:", p.current_room.description)
-            elif p.current_room.name == "Grand Overlook":
-                p.current_room = room['foyer']
-                print("You are now in the:", p.current_room.name)
-                print("Directions:", p.current_room.description)
-            elif p.current_room.name == "Treasure Chamber":
-                p.current_room = room['narrow']
-                print("You are now in the:", p.current_room.name)
-                print("Directions:", p.current_room.description)
-        else:
-            print("That's an invalid move. Please try again.")
+            else:
+                print("That's an invalid move. Please try again.")
 
-    elif player_dir == "w":
-        if p.current_room.w_to is not None:
-            if p.current_room.name == "Narrow Passage":
-                p.current_room = room['foyer']
+        elif player_dir == "w":
+            if p.current_room.w_to is not None and p.items == []:
+                p.current_room = p.current_room.w_to
                 print("You are now in the:", p.current_room.name)
                 print("Directions:", p.current_room.description)
-        else:
-            print("That's an invalid move. Please try again.")
+            else:
+                print("That's an invalid move. Please try again.")
 
-    elif player_dir == 'q':
-        print("Thank you for playing!")
-        sys.exit()
+        elif player_dir == 'q':
+            print("Thank you for playing!")
+            sys.exit()
 
+
+play_game()
